@@ -4,6 +4,8 @@
 >
 *Samadhaan Credit Consultancy Pvt. Ltd.*
 
+**Created & Developed by:** [Rohit Singh Rathor](https://github.com/rsr605) 👨‍💻
+
 A production-grade, multi-page **Business Intelligence dashboard** built for visualizing sales performance, customer behavior, profitability, and order-level data — with interactive Chart.js visualizations, real-time filtering, CSV import/export, forecasting, and a realistic generated dataset of **800 orders**.
 
 Built with **Node.js + Express** on the backend and **vanilla JavaScript + Chart.js** on the frontend. No build step required.
@@ -162,6 +164,16 @@ Runs the full test suite using Node.js's built-in test runner.
 ✉️ support@creditsamadhaan.com
 
 *Credit Samadhaan™ — Empowering Your Financial Future*
+
+---
+
+---
+
+## 👤 Credits
+
+**Rohit Singh Rathor** — [GitHub](https://github.com/rsr605)
+
+Concept, design, full-stack development, analytics engine, and dashboard implementation.
 
 ---
 
