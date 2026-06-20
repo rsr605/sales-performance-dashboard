@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Performance Dashboard</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="app-header">
+    <div class="logo"><span class="icon">📊</span>Sales Performance Dashboard</div>
+    <nav class="nav-tabs" id="navTabs">
+      <button class="nav-tab active" data-page="executive"><span>📋</span> Executive Summary</button>
+      <button class="nav-tab" data-page="sales"><span>📈</span> Sales Performance</button>
+      <button class="nav-tab" data-page="customer"><span>👥</span> Customer Analysis</button>
+      <button class="nav-tab" data-page="profit"><span>💰</span> Profitability</button>
+      <button class="nav-tab" data-page="explorer"><span>🔍</span> Data Explorer</button>
+    </nav>
+    <div class="header-spacer"></div>
+    <div class="data-source-badge" id="dataSourceBadge"><span class="dot"></span><span id="dataSourceText">Sample Data</span></div>
+    <button class="header-btn" id="importBtn" title="Import CSV"><span>📤</span> Import</button>
+    <button class="header-btn" id="printBtn" title="Print Dashboard"><span>🖨</span></button>
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark/light">🌙</button>
+    <button class="export-btn" id="exportBtn"><span>⬇</span> Export CSV</button>
+  </header>
+
+  <!-- ===================== FILTER BAR ===================== -->
+  <div class="filter-bar" id="filterBar">
+    <div class="filter-group">
+      <label>From Date</label>
+      <input type="date" id="filterStartDate">
+    </div>
+    <div class="filter-group">
+      <label>To Date</label>
+      <input type="date" id="filterEndDate">
+    </div>
+    <div class="filter-group">
+      <label>Region</label>
+      <select id="filterRegion"><option value="">All Regions</option></select>
+    </div>
+    <div class="filter-group">
+      <label>Category</label>
+      <select id="filterCategory"><option value="">All Categories</option></select>
+    </div>
+    <div class="filter-group">
+      <label>Customer Type</label>
+      <select id="filterCustomerType">
+        <option value="">All Types</option>
+        <option value="New">New</option>
+        <option value="Returning">Returning</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-apply" id="applyFiltersBtn">Apply Filters</button>
+      <button class="btn-reset" id="resetFiltersBtn">Reset</button>
+    </div>
+  </div>
+
+  <!-- ===================== PAGES ===================== -->
+  <div class="page-container">
+
+    <!-- ============ PAGE 1: EXECUTIVE SUMMARY ============ -->
+    <section class="page active" id="page-executive">
+      <div class="page-title">Executive Summary</div>
+      <div class="page-subtitle">High-level business performance overview</div>
+
+      <div class="kpi-row" id="execKpiRow">
+        <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value" id="kpiRevenue">—</div></div>
+        <div class="kpi-card accent"><div class="kpi-label">Total Profit</div><div class="kpi-value" id="kpiProfit">—</div></div>
+        <div class="kpi-card"><div class="kpi-label">Total Orders</div><div class="kpi-value" id="kpiOrders">—</div></div>
+        <div class="kpi-card warning"><div class="kpi-label">MoM Revenue Growth</div><div class="kpi-value" id="kpiMoM">—</div><div class="kpi-trend neutral" id="kpiMoMTrend"></div></div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card full">
+          <div class="chart-title">Revenue & Profit Trend <span class="hint">(monthly)</span></div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card">
+          <div class="chart-title">Top 5 Products by Revenue</div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Revenue by Category</div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+
+      <div class="insights-box">
+        <div class="insights-title">🔑 Key Insights</div>
+        <ul class="insights-list" id="execInsights"></ul>
+      </div>
+    </section>
+
+    <!-- ============ PAGE 2: SALES PERFORMANCE ============ -->
+    <section class="page" id="page-sales">
+      <div class="page-title">Sales Performance Analysis</div>
+      <div class="page-subtitle">Revenue trends, regional breakdown & drill-down</div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card full">
+          <div class="chart-title">Monthly Revenue Trend <button class="forecast-toggle" id="forecastToggle">📈 Show Forecast</button></div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card">
+          <div class="chart-title">Sales by Region <span class="hint">(click bars to drill down)</span></div>
+          <div class="drill-breadcrumb" id="drillBreadcrumb" style="display:none;"></div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Sales by Product Category</div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card full">
+          <div class="chart-title">Region × Category Revenue Matrix</div>
+          <div class="chart-body"><div id="regionCategoryTable" class="chart-empty">No data</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PAGE 3: CUSTOMER ANALYSIS ============ -->
+    <section class="page" id="page-customer">
+      <div class="page-title">Customer Analysis</div>
+      <div class="page-subtitle">Customer composition, churn & segmentation</div>
+
+      <div class="kpi-row" id="custKpiRow">
+        <div class="kpi-card"><div class="kpi-label">Distinct Customers</div><div class="kpi-value" id="kpiCustTotal">—</div></div>
+        <div class="kpi-card danger"><div class="kpi-label">Churn Rate</div><div class="kpi-value" id="kpiChurn">—</div></div>
+        <div class="kpi-card accent"><div class="kpi-label">New Customer %</div><div class="kpi-value" id="kpiNewCust">—</div></div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card">
+          <div class="chart-title">New vs Returning Customers</div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Churned vs Active Customers</div>
+ <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card full">
+          <div class="chart-title">Top 10 Customers by Revenue <span class="hint">(red = churned)</span></div>
+          <div class="chart-body tall"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card full">
+          <div class="chart-title">Customer Segmentation Matrix</div>
+          <div class="chart-body"><div id="segmentationTable" class="chart-empty">No data</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PAGE 4: PROFITABILITY ============ -->
+    <section class="page" id="page-profit">
+      <div class="page-title">Profitability Analysis</div>
+      <div class="page-subtitle">Profit drivers & loss-making products</div>
+
+      <div class="kpi-row" id="profitKpiRow">
+        <div class="kpi-card accent"><div class="kpi-label">Profit Margin</div><div class="kpi-value" id="kpiMargin">—</div></div>
+        <div class="kpi-card"><div class="kpi-label">Total Profit</div><div class="kpi-value" id="kpiTotalProfit">—</div></div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card full">
+          <div class="chart-title">Sales vs Profit Comparison <span class="hint">(monthly)</span></div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card">
+          <div class="chart-title">Most Profitable Products <span class="hint">(top 5)</span></div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Loss-Making Products</div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+
+      <div class="chart-grid cols-2">
+        <div class="chart-card full">
+          <div class="chart-title">Profit Margin by Region</div>
+          <div class="chart-body"><div class="chart-loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PAGE 5: DATA EXPLORER ============ -->
+    <section class="page" id="page-explorer">
+      <div class="page-title">Data Explorer</div>
+      <div class="page-subtitle">Search, sort, and browse all order records</div>
+
+      <div class="chart-card">
+        <div class="data-explorer-controls">
+          <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search orders, products, customers, regions...">
+          <div class="data-table-info" id="dataTableInfo">— rows</div>
+        </div>
+        <div class="table-scroll" id="dataTableScroll">
+          <div class="chart-empty">No data</div>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </section>
+
+  </div><!-- /.page-container -->
+
+  <!-- ===================== UPLOAD MODAL ===================== -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal">
+      <div class="modal-title">📤 Import CSV Data</div>
+      <div class="modal-desc">
+        Upload your own sales dataset to replace the sample data. All charts and analytics
+        will update instantly. The file must be a CSV with the following columns:
+      </div>
+      <div class="modal-schema-list">
+        OrderID, Date (YYYY-MM-DD), Region, Country, State, City,<br>
+        ProductCategory, ProductName, Sales, Profit, Quantity,<br>
+        CustomerID, CustomerType (New/Returning), Churned (Yes/No)
+      </div>
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-icon">📁</div>
+        <div class="drop-zone-text">Drop your CSV file here or click to browse</div>
+        <div class="drop-zone-hint">Max file size: 10MB</div>
+        <input type="file" id="fileInput" accept=".csv,text/csv" style="display:none;">
+      </div>
+      <div class="upload-status" id="uploadStatus"></div>
+      <div class="modal-actions">
+        <button class="btn-reset" id="resetDataBtn">Reset to Sample Data</button>
+        <button class="btn-reset" id="closeModalBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/api.js"></script>
+  <script type="module" src="/js/charts.js"></script>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

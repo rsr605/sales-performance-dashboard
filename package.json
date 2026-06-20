@@ -1,0 +1,14 @@
+{
+  "name": "sales-performance-dashboard",
+  "version": "1.0.0",
+  "description": "Interactive Sales Performance Dashboard — multi-page BI report with Chart.js visualizations and realistic generated dataset.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
