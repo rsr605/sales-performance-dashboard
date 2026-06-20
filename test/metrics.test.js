@@ -127,8 +127,8 @@ describe('getTopProducts', () => {
 describe('getSalesByRegion', () => {
   const regions = getSalesByRegion(data);
 
-  test('returns 4 regions', () => {
-    assert.equal(regions.length, 4);
+  test('returns 5 regions', () => {
+    assert.equal(regions.length, 5);
   });
 
   test('each region has drill-down state data', () => {
@@ -155,8 +155,8 @@ describe('getSalesByRegion', () => {
 describe('getSalesByCategory', () => {
   const cats = getSalesByCategory(data);
 
-  test('returns 3 categories', () => {
-    assert.equal(cats.length, 3);
+  test('returns 4 categories', () => {
+    assert.equal(cats.length, 4);
   });
 
   test('sorted descending by revenue', () => {
@@ -226,8 +226,8 @@ describe('getProfitability', () => {
 describe('getProfitMarginByRegion', () => {
   const pm = getProfitMarginByRegion(data);
 
-  test('returns 4 regions with margin', () => {
-    assert.equal(pm.length, 4);
+  test('returns 5 regions with margin', () => {
+    assert.equal(pm.length, 5);
     for (const r of pm) assert.ok(typeof r.margin === 'number');
   });
 });

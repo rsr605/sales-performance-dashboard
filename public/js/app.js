@@ -217,25 +217,25 @@ function generateInsights(summary, topProducts, categoryData, profitability) {
   }
 
   if (topProducts.length > 0) {
-    insights.push(`The top product <strong>${escapeHTML(topProducts[0].product)}</strong> generated <strong>${H.fmtCurrencyFull(topProducts[0].revenue)}</strong> in revenue.`);
+    insights.push(`The top service <strong>${escapeHTML(topProducts[0].product)}</strong> generated <strong>${H.fmtCurrencyFull(topProducts[0].revenue)}</strong> in revenue.`);
   }
 
   if (categoryData.length > 0) {
     const topCat = categoryData[0];
     const totalRev = categoryData.reduce((s, c) => s + c.revenue, 0);
     const share = ((topCat.revenue / totalRev) * 100).toFixed(1);
-    insights.push(`The <strong>${escapeHTML(topCat.category)}</strong> category leads with <strong>${share}%</strong> of total revenue.`);
+    insights.push(`The <strong>${escapeHTML(topCat.category)}</strong> service category leads with <strong>${share}%</strong> of total revenue.`);
   }
 
   if (profitability.lossMaking.length > 0) {
     const lossNames = profitability.lossMaking.map((p) => escapeHTML(p.product)).join(', ');
-    insights.push(`⚠ <strong>${profitability.lossMaking.length} loss-making product(s)</strong> detected: ${lossNames}. A pricing or cost review is recommended.`);
+    insights.push(`⚠ <strong>${profitability.lossMaking.length} loss-making service(s)</strong> detected: ${lossNames}. A pricing or cost review is recommended.`);
   } else {
-    insights.push(`✅ All products are profitable — no loss-makers detected.`);
+    insights.push(`✅ All services are profitable — no loss-makers detected.`);
   }
 
   if (summary.churnRate > 15) {
-    insights.push(`The churn rate of <strong>${summary.churnRate.toFixed(1)}%</strong> is above the 15% threshold — customer retention initiatives are recommended.`);
+    insights.push(`The client churn rate of <strong>${summary.churnRate.toFixed(1)}%</strong> is above the 15% threshold — client retention initiatives are recommended.`);
   }
 
   insights.push(`Overall profit margin stands at <strong>${summary.profitMargin.toFixed(1)}%</strong>.`);

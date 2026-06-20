@@ -23,34 +23,43 @@ function mulberry32(seed) {
 
 const REGIONS = {
   North: {
-    country: 'USA',
+    country: 'India',
     states: {
-      'New York': ['Albany', 'Buffalo', 'Rochester', 'New York City'],
-      'Pennsylvania': ['Philadelphia', 'Pittsburgh', 'Harrisburg'],
+      'Delhi': ['New Delhi', 'Dwarka', 'Rohini'],
+      'Uttar Pradesh': ['Lucknow', 'Noida', 'Kanpur', 'Ghaziabad'],
+      'Punjab': ['Ludhiana', 'Amritsar', 'Chandigarh'],
     },
   },
   South: {
-    country: 'USA',
+    country: 'India',
     states: {
-      Texas: ['Houston', 'Dallas', 'Austin', 'San Antonio'],
-      Florida: ['Miami', 'Orlando', 'Tampa'],
-      Georgia: ['Atlanta', 'Savannah'],
+      'Karnataka': ['Bengaluru', 'Mysuru', 'Mangaluru'],
+      'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai'],
+      'Telangana': ['Hyderabad', 'Warangal'],
     },
   },
   East: {
-    country: 'USA',
+    country: 'India',
     states: {
-      'New Jersey': ['Newark', 'Trenton'],
-      Massachusetts: ['Boston', 'Cambridge'],
-      Connecticut: ['Hartford', 'New Haven'],
+      'West Bengal': ['Kolkata', 'Siliguri', 'Howrah'],
+      'Odisha': ['Bhubaneswar', 'Cuttack'],
+      'Jharkhand': ['Ranchi', 'Jamshedpur'],
     },
   },
   West: {
-    country: 'USA',
+    country: 'India',
     states: {
-      California: ['San Jose', 'Los Angeles', 'San Diego', 'San Francisco'],
-      Washington: ['Seattle', 'Spokane'],
-      Oregon: ['Portland', 'Eugene'],
+      'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Thane'],
+      'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara'],
+      'Goa': ['Panaji', 'Margao'],
+    },
+  },
+  Central: {
+    country: 'India',
+    states: {
+      'Madhya Pradesh': ['Indore', 'Bhopal', 'Jabalpur', 'Gwalior'],
+      'Chhattisgarh': ['Raipur', 'Bilaspur'],
+      'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur'],
     },
   },
 };
@@ -58,31 +67,38 @@ const REGIONS = {
 // Products with `lossProb` > 0 have an elevated chance of selling at a loss
 // AND a thinner upside margin, so they aggregate to genuinely negative profit
 // at the product level — creating real loss-makers for the profitability page.
+// Credit/financial services offered by Credit Samadhaan, with INR pricing.
 const PRODUCTS = {
-  Electronics: [
-    { name: 'Wireless Mouse', basePrice: 35 },
-    { name: 'USB Hub', basePrice: 25 },
-    { name: 'Laptop Stand', basePrice: 45 },
-    { name: 'Bluetooth Speaker', basePrice: 80 },
-    { name: '4K Monitor', basePrice: 450, lossProb: 0.72, lossMargin: [0.15, 0.35], winMargin: [0.05, 0.15] },
-    { name: 'Webcam', basePrice: 60 },
-    { name: 'Tablet', basePrice: 300 },
-    { name: 'Mechanical Keyboard', basePrice: 90 },
+  'Credit Repair': [
+    { name: 'CIBIL Dispute Filing', basePrice: 1500 },
+    { name: 'Credit Report Correction', basePrice: 2500 },
+    { name: 'Settlement Resolution', basePrice: 5000, lossProb: 0.72, lossMargin: [0.15, 0.35], winMargin: [0.05, 0.15] },
+    { name: 'Default Removal Service', basePrice: 8000 },
+    { name: 'DPA Entry Removal', basePrice: 3500 },
+    { name: 'Hard Inquiry Dispute', basePrice: 1200 },
+    { name: 'Written-Off Status Fix', basePrice: 6000 },
   ],
-  Furniture: [
-    { name: 'Office Chair', basePrice: 320, lossProb: 0.72, lossMargin: [0.15, 0.35], winMargin: [0.05, 0.15] },
-    { name: 'Standing Desk', basePrice: 480 },
-    { name: 'Bookshelf', basePrice: 180 },
-    { name: 'Desk Lamp', basePrice: 35 },
-    { name: 'Filing Cabinet', basePrice: 140 },
+  'Credit Monitoring': [
+    { name: 'Monthly Score Monitor', basePrice: 499 },
+    { name: 'Quarterly Credit Report', basePrice: 999 },
+    { name: 'Real-Time Alert Service', basePrice: 1499 },
+    { name: 'Annual Credit Health Check', basePrice: 2999 },
   ],
-  'Office Supplies': [
-    { name: 'Pens (Pack)', basePrice: 8 },
-    { name: 'Stapler', basePrice: 12 },
-    { name: 'Folder Set', basePrice: 15 },
-    { name: 'Sticky Notes', basePrice: 5 },
-    { name: 'Notebook', basePrice: 10 },
-    { name: 'Whiteboard', basePrice: 65 },
+  Consulting: [
+    { name: 'Loan Eligibility Consultation', basePrice: 2000 },
+    { name: 'Credit Improvement Roadmap', basePrice: 3500 },
+    { name: 'Premium Financial Advisory', basePrice: 7500 },
+    { name: 'Home Loan Documentation', basePrice: 5000 },
+    { name: 'Insurance Premium Advisory', basePrice: 1800 },
+    { name: 'Tax Planning Consultation', basePrice: 4000 },
+  ],
+  'Franchise Services': [
+    { name: 'Kendra Setup Fee', basePrice: 50000 },
+    { name: 'Kendra Monthly License', basePrice: 15000 },
+    { name: 'Partner Onboarding Kit', basePrice: 25000, lossProb: 0.72, lossMargin: [0.15, 0.35], winMargin: [0.05, 0.15] },
+    { name: 'Training & Certification', basePrice: 12000 },
+    { name: 'Lead Generation Package', basePrice: 8000 },
+    { name: 'Co-Branding Setup', basePrice: 20000 },
   ],
 };
 
@@ -136,8 +152,9 @@ export function generateDataset(seed = 42, count = 800) {
     const category = pick(CATEGORIES);
     const product = pick(PRODUCTS[category]);
 
-    // Quantity: 1–30
-    const quantity = 1 + Math.floor(rand() * 30);
+    // Quantity: 1–30 for low-value services, lower for expensive franchise services
+    const maxQty = product.basePrice >= 10000 ? 5 : 30;
+    const quantity = 1 + Math.floor(rand() * maxQty);
 
     // Sales: unit price varies ±30% around base, times quantity
     const priceVariance = 0.7 + rand() * 0.6; // 0.7x .. 1.3x

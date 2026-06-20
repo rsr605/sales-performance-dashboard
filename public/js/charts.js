@@ -53,14 +53,19 @@ function gridColor() {
 // --- Helpers ----------------------------------------------------------------
 function fmtCurrency(n) {
   if (n === null || n === undefined || isNaN(n)) return '—';
-  if (Math.abs(n) >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (Math.abs(n) >= 1_000) return `$${(n / 1_000).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
+  const abs = Math.abs(n);
+  const sign = n < 0 ? '-' : '';
+  // Indian numbering abbreviations: Lakh (1,00,000), Crore (1,00,00,000)
+  if (abs >= 1_00_00_000) return `${sign}₹${(abs / 1_00_00_000).toFixed(2)}Cr`;
+  if (abs >= 1_00_000) return `${sign}₹${(abs / 1_00_000).toFixed(2)}L`;
+  if (abs >= 1_000) return `${sign}₹${(abs / 1_000).toFixed(1)}K`;
+  return `${sign}₹${abs.toFixed(0)}`;
 }
 
 function fmtCurrencyFull(n) {
   if (n === null || n === undefined || isNaN(n)) return '—';
-  return `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const sign = n < 0 ? '-' : '';
+  return `${sign}₹${Math.abs(n).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function fmtPct(n) {

@@ -67,19 +67,38 @@ describe('Data Generator', () => {
     assert.ok(losses.length > 0, 'No loss-making orders found');
   });
 
-  test('all four regions are present', () => {
+  test('all five regions are present', () => {
     const regions = new Set(data.map((o) => o.Region));
     assert.ok(regions.has('North'));
     assert.ok(regions.has('South'));
     assert.ok(regions.has('East'));
     assert.ok(regions.has('West'));
+    assert.ok(regions.has('Central'));
   });
 
-  test('all three product categories are present', () => {
+  test('all four product categories are present', () => {
     const cats = new Set(data.map((o) => o.ProductCategory));
-    assert.ok(cats.has('Electronics'));
-    assert.ok(cats.has('Furniture'));
-    assert.ok(cats.has('Office Supplies'));
+    assert.ok(cats.has('Credit Repair'));
+    assert.ok(cats.has('Credit Monitoring'));
+    assert.ok(cats.has('Consulting'));
+    assert.ok(cats.has('Franchise Services'));
+  });
+
+  test('country is India for all orders', () => {
+    const countries = new Set(data.map((o) => o.Country));
+    assert.equal(countries.size, 1);
+    assert.ok(countries.has('India'));
+  });
+
+  test('includes Indore (Credit Samadhaan HQ city)', () => {
+    const cities = new Set(data.map((o) => o.City));
+    assert.ok(cities.has('Indore'), 'Indore should be in the dataset');
+  });
+
+  test('sales values are in INR-appropriate range', () => {
+    const sales = data.map((o) => o.Sales);
+    assert.ok(sales.every((s) => s > 0), 'All sales must be positive');
+    assert.ok(sales.every((s) => s < 350000), 'Sales should be in INR range');
   });
 });
 
