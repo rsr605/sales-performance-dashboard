@@ -2,4 +2,8 @@ node_modules/
 .env
 *.log
 .playwright-mcp/
-*.png
+# Ignore screenshots in the project root
+/*.png
+# But keep screenshots used in docs/README
+!docs/
+!docs/**
